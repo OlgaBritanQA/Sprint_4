@@ -1,65 +1,50 @@
 package org.example.flow;
 
 import org.example.pages.MainPage;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
 
-public class QATest {
-    private MainPage mainPage;
-    private WebDriver driver;
+@RunWith(Parameterized.class)
+public class QATest extends MainTest {
+    private static final String URL = "https://qa-scooter.praktikum-services.ru/";
 
+    @Parameterized.Parameter
+    public int questionNumber;
 
-    @Before
-    public void setUp() {
-        driver = new ChromeDriver();
-        //driver = new FirefoxDriver();
-        driver.get("https://qa-scooter.praktikum-services.ru/");
-        mainPage = new MainPage(driver);
+    //сделала проверки незывисимыми  - добавлена параметризация для каждого вопроса и ответа.
+    @Parameterized.Parameters
+    public static Collection<Object[]> testData() {
+        return Arrays.asList(new Object[][]{
+                {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}
+        });
     }
+
+    @Override
+    protected WebDriver createDriver() {
+        return new ChromeDriver();
+    }
+
+    @Override
+    protected String getUrl() {
+        return URL;
+    }
+
     @Test
     public void testQAFlow() {
+        MainPage mainPage = new MainPage(driver);
 
-        //клик по первому вопрос в разделе Вопросы о важном
-        mainPage.clickFirstQuestion();
-        assertTrue("Ответ на первый вопрос не раскрывается", mainPage.isFirstAnswerOpen());
-
-        //клик по второму вопросу в разделе Вопросы о важном
-        mainPage.clickSecondQuestion();
-        assertTrue("Ответ на второй вопрос не раскрывается", mainPage.isSecondAnswerOpen());
-
-        //клик по третьему вопросу в разделе Вопросы о важном
-        mainPage.clickThirdQuestion();
-        assertTrue("Ответ на третий вопрос не раскрывается", mainPage.isThirdAnswerOpen());
-
-        //клик по четвертому вопросу в разделе Вопросы о важном
-        mainPage.clickFourthQuestion();
-        assertTrue("Ответ на четвертый вопрос не раскрывается", mainPage.isFourthAnswerOpen());
-
-        //клик по пятому вопросу в разделе Вопросы о важном
-        mainPage.clickFifthQuestion();
-        assertTrue("Ответ на пятый вопрос не раскрывается", mainPage.isFifthAnswerOpen());
-
-        //клик по шестому вопросу в разделе Вопросы о важном
-        mainPage.clickSixthQuestion();
-        assertTrue("Ответ на шестой вопрос не раскрывается", mainPage.isSixthAnswerOpen());
-
-        //клик по седьмому вопросу в разделе Вопросы о важном
-        mainPage.clickSeventhQuestion();
-        assertTrue("Ответ на седьмой вопрос не раскрывается", mainPage.isSeventhAnswerOpen());
-
-        //клик по восьмому вопросу в разделе Вопросы о важном
-        mainPage.clickEighthQuestion();
-        assertTrue("Ответ на восьмой вопрос не раскрывается", mainPage.isEighthAnswerOpen());
-    }
-
-    @After
-    public void driverQuit() {
-        driver.quit();
+        //клик по вопросам в разделе Вопросы о важном и проверка, что ответы раскрываются
+        mainPage.clickQuestionByIndex(questionNumber);
+        assertTrue("Ответ на вопрос " + questionNumber + " не раскрылся",
+                mainPage.isQuestionAnswerOpenByIndex(questionNumber)
+        );
     }
 }
