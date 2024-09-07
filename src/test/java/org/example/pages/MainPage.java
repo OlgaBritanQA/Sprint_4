@@ -40,4 +40,10 @@ public class MainPage {
         By answerLocator = By.id("accordion__panel-" + questionIndex);
         return driver.findElement(answerLocator).isDisplayed();
     }
+
+    //метод для получения текста ответа
+    public String getAnswerText(int questionIndex){
+        By answerTextLocator = By.id("accordion__panel-" + questionIndex);
+        return driver.findElement(answerTextLocator).getText();
+    }
 }
